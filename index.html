@@ -1,0 +1,2198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amprem Generate by SeanW</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', system-ui, sans-serif;
+    background: #000; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px; color: #fff; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(139,92,246,0.15), transparent 50%);
+    pointer-events: none;
+  }
+  .container {
+    position: relative; width: 100%; max-width: 440px;
+    background: #0a0a0a; border: 1px solid #1a1a1a;
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 30px 80px rgba(0,0,0,0.9);
+    animation: slideUp .5s cubic-bezier(0.16, 1, 0.3, 1);
+    margin: auto;
+  }
+  @keyframes slideUp { from {opacity:0;transform:translateY(20px);} to {opacity:1;transform:none;} }
+  .content { padding: 28px 24px 26px; }
+  h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; line-height: 1.3; }
+  h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, #a78bfa, #f472b6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .sub { font-size: 13px; color: #666; margin-bottom: 20px; line-height: 1.5; }
+  .steps { display: flex; gap: 6px; margin-bottom: 20px; }
+  .step-dot { flex: 1; height: 2px; border-radius: 2px; background: #1a1a1a; transition: .4s; }
+  .step-dot.active { background: linear-gradient(90deg, #8b5cf6, #ec4899); }
+  .form-group { margin-bottom: 13px; }
+  label {
+    display: block; font-size: 11px; color: #666;
+    margin-bottom: 7px; font-weight: 500;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  input, select {
+    width: 100%; padding: 13px 15px; background: #000;
+    border: 1px solid #1a1a1a; border-radius: 11px;
+    color: #fff; font-size: 14px; outline: none;
+    transition: .2s; font-family: inherit;
+  }
+  input:focus, select:focus { border-color: #333; background: #050505; }
+  input::placeholder { color: #333; }
+  button {
+    width: 100%; padding: 13px; background: #fff;
+    border: none; border-radius: 11px; color: #000;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: .2s; margin-top: 8px; font-family: inherit;
+  }
+  button:hover:not(:disabled) { background: #e5e5e5; transform: translateY(-1px); }
+  button:active:not(:disabled) { transform: translateY(0); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-ghost {
+    background: transparent; border: 1px solid #1a1a1a;
+    color: #888; margin-top: 9px; font-weight: 500;
+  }
+  .btn-ghost:hover:not(:disabled) { background: #0a0a0a; color: #fff; border-color: #333; transform: none; }
+  .btn-wa { background: #25D366; color: #fff; }
+  .btn-wa:hover:not(:disabled) { background: #1eb955; }
+  .btn-danger { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .btn-danger:hover:not(:disabled) { background: rgba(239,68,68,0.25); color: #fca5a5; transform: none; }
+  .btn-purple { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff; }
+  .btn-purple:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(139,92,246,0.3); }
+  .hint { font-size: 12px; color: #444; margin-top: 13px; text-align: center; line-height: 1.6; }
+  .hint a { color: #a78bfa; text-decoration: none; font-weight: 600; cursor: pointer; }
+  .hint a:hover { text-decoration: underline; }
+  .info-box {
+    background: #050505; border: 1px solid #1a1a1a;
+    border-radius: 11px; padding: 12px 14px;
+    font-size: 12.5px; color: #888; margin-bottom: 16px;
+    line-height: 1.5; display: flex; align-items: center; gap: 10px;
+  }
+  .info-box .icon {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: #0a0a0a; display: flex;
+    align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 14px;
+  }
+  .info-box strong { color: #fff; font-weight: 500; word-break: break-all; display: block; margin-top: 2px; font-size: 12px; }
+  .user-badge {
+    display: flex; align-items: center; gap: 8px;
+    background: #050505; border: 1px solid #1a1a1a;
+    border-radius: 11px; padding: 11px 13px;
+    margin-bottom: 16px; font-size: 12px;
+  }
+  .user-badge .info { flex: 1; min-width: 0; }
+  .user-badge .name { color: #a78bfa; font-weight: 600; }
+  .user-badge .id-tag {
+    font-family: 'SF Mono', monospace; font-size: 10.5px;
+    color: #888; background: #0a0a0a;
+    padding: 3px 8px; border-radius: 6px;
+    border: 1px solid #1a1a1a; margin-left: 6px;
+    cursor: pointer; transition: .2s;
+  }
+  .user-badge .id-tag:hover { color: #a78bfa; border-color: rgba(139,92,246,0.3); }
+  .user-badge .btn-mini {
+    color: #666; cursor: pointer; font-size: 11px;
+    background: transparent; border: none;
+    padding: 5px 9px; margin: 0; width: auto;
+    border-radius: 6px; transition: .2s; font-weight: 500;
+  }
+  .user-badge .btn-mini:hover { color: #f87171; background: rgba(239,68,68,0.1); }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 16px; }
+  .stat-card {
+    background: #050505; border: 1px solid #1a1a1a;
+    border-radius: 11px; padding: 13px;
+    position: relative; overflow: hidden;
+  }
+  .stat-card .label {
+    font-size: 10px; color: #555; letter-spacing: 0.05em;
+    text-transform: uppercase; margin-bottom: 5px;
+  }
+  .stat-card .value { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+  .stat-card .value.green { color: #4ade80; }
+  .stat-card .value.amber { color: #fbbf24; }
+  .stat-card .value.red { color: #f87171; }
+  .stat-card .value.purple { color: #a78bfa; }
+  .stat-card .sub-v { font-size: 10.5px; color: #444; margin-top: 3px; }
+  .result {
+    margin-top: 14px; padding: 11px 13px;
+    background: #050505; border: 1px solid #1a1a1a;
+    border-radius: 10px; font-family: 'SF Mono', 'Courier New', monospace;
+    font-size: 11.5px; color: #888; white-space: pre-wrap;
+    word-break: break-all; display: none; max-height: 180px;
+    overflow-y: auto; line-height: 1.6;
+  }
+  .result.show { display: block; }
+  .result.ok { border-color: rgba(34,197,94,0.3); color: #4ade80; }
+  .result.err { border-color: rgba(239,68,68,0.3); color: #f87171; }
+  .hidden { display: none !important; }
+  .toast {
+    position: fixed; top: 20px; left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: #0a0a0a; border: 1px solid #1a1a1a;
+    color: #fff; padding: 12px 20px; border-radius: 12px;
+    font-size: 13px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    opacity: 0; transition: .3s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none; z-index: 400;
+    display: flex; align-items: center; gap: 8px;
+    max-width: 90%; text-align: center;
+    font-weight: 500;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.ok { border-color: rgba(34,197,94,0.4); }
+  .toast.err { border-color: rgba(239,68,68,0.4); }
+  .spin {
+    display: inline-block; width: 12px; height: 12px;
+    border: 2px solid rgba(0,0,0,0.3); border-top-color: #000;
+    border-radius: 50%; animation: rotate .6s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+  }
+  @keyframes rotate { to { transform: rotate(360deg); } }
+  .overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(12px); display: flex;
+    align-items: center; justify-content: center;
+    padding: 20px; z-index: 200; opacity: 0;
+    pointer-events: none; transition: opacity .3s;
+    overflow-y: auto;
+  }
+  .overlay.show { opacity: 1; pointer-events: auto; }
+  .modal-card {
+    width: 100%; max-width: 380px; background: #0a0a0a;
+    border: 1px solid #1a1a1a; border-radius: 24px;
+    padding: 30px 24px 24px; text-align: center;
+    transform: scale(0.9); transition: transform .4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative; overflow: hidden; margin: auto;
+  }
+  .overlay.show .modal-card { transform: scale(1); }
+  .check-circle {
+    width: 68px; height: 68px; border-radius: 50%;
+    background: linear-gradient(135deg, #10b981, #059669);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px; position: relative;
+    box-shadow: 0 0 40px rgba(16,185,129,0.4);
+    animation: popIn .5s cubic-bezier(0.34, 1.56, 0.64, 1) .1s both;
+  }
+  .check-circle::after {
+    content: ''; position: absolute; inset: -6px;
+    border-radius: 50%; border: 2px solid rgba(16,185,129,0.3);
+    animation: ringPulse 1.5s ease-out infinite;
+  }
+  @keyframes popIn { from {transform:scale(0);} to {transform:scale(1);} }
+  @keyframes ringPulse {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.4); opacity: 0; }
+  }
+  .check-svg {
+    width: 32px; height: 32px; stroke: #fff;
+    stroke-width: 3.5; fill: none;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+  .check-svg path { stroke-dasharray: 50; stroke-dashoffset: 50; animation: drawCheck .5s ease-out .4s forwards; }
+  @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+  .modal-title {
+    font-size: 21px; font-weight: 700; margin-bottom: 8px;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #fff, #a3a3a3);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .modal-sub { font-size: 13.5px; color: #888; line-height: 1.6; margin-bottom: 20px; }
+  .modal-sub strong { color: #4ade80; font-weight: 600; }
+  .modal-info {
+    background: #050505; border: 1px solid #1a1a1a;
+    border-radius: 11px; padding: 13px; text-align: left;
+    margin-bottom: 16px; font-size: 12px;
+  }
+  .modal-info .row {
+    display: flex; justify-content: space-between;
+    padding: 6px 0; border-bottom: 1px solid #111;
+  }
+  .modal-info .row:last-child { border-bottom: none; }
+  .modal-info .row span:first-child { color: #555; }
+  .modal-info .row span:last-child {
+    color: #fff; font-weight: 500; max-width: 60%;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .btn-success {
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff; border: none; border-radius: 11px;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: .2s;
+  }
+  .btn-success:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(16,185,129,0.3); }
+  .wa-card::before {
+    content: ''; position: absolute; top: -80px; left: 50%;
+    transform: translateX(-50%); width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(37,211,102,0.2), transparent 70%);
+    pointer-events: none;
+  }
+  .wa-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: #25D366; display: flex;
+    align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 0 40px rgba(37,211,102,0.4);
+    animation: popIn .5s cubic-bezier(0.34, 1.56, 0.64, 1) .1s both;
+  }
+  .wa-icon svg { width: 34px; height: 34px; fill: #fff; }
+  .wa-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em; }
+  .wa-sub { font-size: 13px; color: #888; line-height: 1.6; margin-bottom: 20px; }
+  .wa-sub strong { color: #25D366; }
+  .limit-badge {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px; background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 10px; font-size: 12px;
+    color: #fbbf24; margin-bottom: 14px;
+    line-height: 1.5; text-align: left;
+  }
+  .limit-badge.used {
+    background: rgba(239,68,68,0.08);
+    border-color: rgba(239,68,68,0.2);
+    color: #f87171;
+  }
+  .limit-badge .ico { font-size: 16px; flex-shrink: 0; line-height: 1.3; }
+  .limit-badge strong { color: #fff; }
+  .admin-tabs {
+    display: flex; gap: 4px; margin-bottom: 16px;
+    background: #050505; padding: 4px;
+    border-radius: 11px; border: 1px solid #1a1a1a;
+  }
+  .admin-tab {
+    flex: 1; padding: 9px 6px; text-align: center;
+    font-size: 11.5px; font-weight: 500;
+    color: #666; cursor: pointer;
+    border-radius: 8px; transition: .2s;
+    background: transparent; border: none;
+    width: auto; margin: 0;
+  }
+  .admin-tab.active { background: #fff; color: #000; }
+  .admin-tab:hover:not(.active) { color: #fff; }
+  .admin-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .admin-head .title {
+    font-size: 15px; font-weight: 700;
+    background: linear-gradient(135deg, #a78bfa, #f472b6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .admin-head .badge {
+    font-size: 10px; padding: 4px 10px;
+    background: rgba(139,92,246,0.15);
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 20px; color: #a78bfa;
+    font-weight: 600; letter-spacing: 0.05em;
+  }
+  .user-list {
+    max-height: 360px; overflow-y: auto;
+    border: 1px solid #1a1a1a; border-radius: 11px;
+    background: #050505;
+  }
+  .user-list::-webkit-scrollbar { width: 4px; }
+  .user-list::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+  .user-item {
+    padding: 13px 15px; border-bottom: 1px solid #111;
+    cursor: pointer; transition: .2s;
+  }
+  .user-item:last-child { border-bottom: none; }
+  .user-item:hover { background: #0a0a0a; }
+  .user-item.selected { background: rgba(139,92,246,0.08); border-left: 3px solid #a78bfa; }
+  .user-item .top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 6px; gap: 8px;
+  }
+  .user-item .uname { font-size: 13px; font-weight: 600; color: #fff; }
+  .user-item .uid {
+    font-family: 'SF Mono', monospace; font-size: 10px;
+    color: #666; background: #000;
+    padding: 2px 6px; border-radius: 4px;
+    border: 1px solid #1a1a1a; cursor: pointer;
+  }
+  .user-item .uid:hover { color: #a78bfa; border-color: rgba(139,92,246,0.3); }
+  .user-item .meta { font-size: 11px; color: #555; display: flex; gap: 6px; flex-wrap: wrap; }
+  .user-item .meta .pill {
+    padding: 2px 8px; border-radius: 6px;
+    background: #0a0a0a; border: 1px solid #1a1a1a;
+  }
+  .user-item .meta .pill.green { color: #4ade80; border-color: rgba(34,197,94,0.2); }
+  .user-item .meta .pill.red { color: #f87171; border-color: rgba(239,68,68,0.2); }
+  .user-item .meta .pill.amber { color: #fbbf24; border-color: rgba(245,158,11,0.2); }
+  .user-item .meta .pill.purple { color: #a78bfa; border-color: rgba(139,92,246,0.2); }
+  .admin-form {
+    background: #050505; border: 1px solid #1a1a1a;
+    border-radius: 11px; padding: 15px; margin-bottom: 13px;
+  }
+  .admin-form .title-form {
+    font-size: 12px; color: #888; margin-bottom: 13px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .admin-form .title-form .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #a78bfa;
+  }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .help-text { font-size: 10.5px; color: #444; margin-top: 4px; line-height: 1.4; }
+  .help-text code {
+    background: #0a0a0a; padding: 1px 5px;
+    border-radius: 4px; color: #a78bfa; font-size: 10px;
+  }
+  .empty-state {
+    padding: 36px 20px; text-align: center;
+    color: #444; font-size: 12px;
+  }
+  .empty-state .ico { font-size: 32px; margin-bottom: 10px; opacity: 0.5; }
+  .badge-role {
+    font-size: 9px; padding: 2px 6px;
+    border-radius: 4px; font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .badge-role.admin { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff; }
+  .progress-bar {
+    height: 3px; background: #1a1a1a; border-radius: 3px;
+    margin-top: 14px; overflow: hidden; display: none;
+  }
+  .progress-bar.show { display: block; }
+  .progress-bar span {
+    display: block; height: 100%; width: 0%;
+    background: linear-gradient(90deg, #8b5cf6, #ec4899);
+    animation: loading 3s ease-in-out infinite;
+  }
+  @keyframes loading { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }
+  .history-list {
+    margin-top: 14px; max-height: 200px;
+    overflow-y: auto; border: 1px solid #1a1a1a;
+    border-radius: 10px; background: #050505;
+  }
+  .history-item {
+    padding: 10px 13px; border-bottom: 1px solid #111;
+    font-size: 11.5px;
+  }
+  .history-item:last-child { border-bottom: none; }
+  .history-item .h-email { color: #fff; font-weight: 500; margin-bottom: 2px; word-break: break-all; }
+  .history-item .h-meta { color: #555; font-size: 10.5px; }
+  .history-item .h-order {
+    font-family: 'SF Mono', monospace; font-size: 10px;
+    color: #4ade80; margin-top: 2px;
+  }
+  .section-title {
+    font-size: 12px; color: #666;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    margin: 16px 0 8px; font-weight: 600;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .section-title .count {
+    background: #0a0a0a; padding: 2px 8px;
+    border-radius: 6px; font-size: 10px;
+    color: #a78bfa; border: 1px solid #1a1a1a;
+  }
+  .ads-header { text-align: center; margin-bottom: 20px; }
+  .ads-header .icon-big {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+    box-shadow: 0 0 40px rgba(245,158,11,0.4);
+    animation: popIn .5s cubic-bezier(0.34, 1.56, 0.64, 1) .1s both;
+  }
+  .ads-header .icon-big span { font-size: 30px; }
+  .step-counter {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-bottom: 16px;
+  }
+  .step-counter .num {
+    font-size: 28px; font-weight: 800;
+    background: linear-gradient(135deg, #a78bfa, #f472b6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .step-counter .total { font-size: 16px; color: #555; font-weight: 600; }
+  .progress-dots {
+    display: flex; justify-content: center;
+    gap: 6px; margin-bottom: 20px;
+  }
+  .progress-dots .dot {
+    width: 30px; height: 5px; border-radius: 3px;
+    background: #1a1a1a; transition: .3s;
+  }
+  .progress-dots .dot.done { background: linear-gradient(90deg, #8b5cf6, #ec4899); }
+  .progress-dots .dot.current {
+    background: #fff;
+    animation: dotPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes dotPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .instruction-box {
+    background: #050505; border: 1px solid #1a1a1a;
+    border-radius: 12px; padding: 18px;
+    margin-bottom: 14px; text-align: left;
+  }
+  .instruction-box .ib-title {
+    font-size: 12px; color: #a78bfa;
+    font-weight: 600; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .instruction-box ol {
+    list-style: none; padding: 0; margin: 0;
+    counter-reset: step;
+  }
+  .instruction-box li {
+    font-size: 12.5px; color: #888;
+    line-height: 1.6; padding: 6px 0 6px 28px;
+    position: relative; counter-increment: step;
+  }
+  .instruction-box li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 6px;
+    width: 20px; height: 20px;
+    background: #0a0a0a; border: 1px solid #1a1a1a;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10.5px; font-weight: 700; color: #a78bfa;
+  }
+  .instruction-box li b { color: #fff; font-weight: 600; }
+  .ad-cta {
+    width: 100%; padding: 15px;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    border: none; border-radius: 12px; color: #fff;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: .2s; margin-top: 8px;
+    display: flex; align-items: center;
+    justify-content: center; gap: 8px;
+    letter-spacing: -0.01em;
+  }
+  .ad-cta:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(245,158,11,0.4); }
+  .ad-cta:disabled { opacity: 0.4; cursor: not-allowed; }
+  .confirm-ads-card::before {
+    content: ''; position: absolute; top: -80px; left: 50%;
+    transform: translateX(-50%); width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(245,158,11,0.2), transparent 70%);
+    pointer-events: none;
+  }
+  .confirm-ads-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 0 40px rgba(245,158,11,0.4);
+    animation: popIn .5s cubic-bezier(0.34, 1.56, 0.64, 1) .1s both;
+  }
+  .confirm-ads-icon span { font-size: 30px; }
+  .confirm-ads-title {
+    font-size: 19px; font-weight: 700;
+    margin-bottom: 8px; letter-spacing: -0.02em;
+  }
+  .confirm-ads-sub {
+    font-size: 13px; color: #888;
+    line-height: 1.6; margin-bottom: 22px;
+  }
+  .confirm-ads-sub b { color: #fbbf24; }
+  .btn-row-2 {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 9px; margin-top: 8px;
+  }
+  .btn-row-2 button { margin-top: 0; }
+  .btn-no {
+    background: transparent; border: 1px solid #1a1a1a;
+    color: #888;
+  }
+  .btn-no:hover:not(:disabled) { background: #0a0a0a; color: #fff; border-color: #333; }
+  .package-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+  .package-card {
+    background: #050505; border: 1px solid #1a1a1a;
+    border-radius: 14px; padding: 16px;
+    cursor: pointer; transition: .2s;
+    position: relative; overflow: hidden;
+    text-align: left;
+  }
+  .package-card:hover {
+    border-color: rgba(139,92,246,0.4);
+    background: #080808;
+    transform: translateY(-2px);
+  }
+  .package-card.featured {
+    border-color: rgba(139,92,246,0.5);
+    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(236,72,153,0.05));
+  }
+  .package-card.featured::after {
+    content: 'POPULER';
+    position: absolute; top: 12px; right: 12px;
+    font-size: 8.5px; font-weight: 800;
+    letter-spacing: 0.08em;
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    color: #fff; padding: 3px 8px;
+    border-radius: 20px;
+  }
+  .package-card .pkg-name {
+    font-size: 15px; font-weight: 700;
+    color: #fff; margin-bottom: 4px;
+  }
+  .package-card .pkg-desc {
+    font-size: 11.5px; color: #666;
+    margin-bottom: 12px; line-height: 1.5;
+  }
+  .package-card .pkg-row {
+    display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .package-card .pkg-keys {
+    font-size: 20px; font-weight: 800;
+    background: linear-gradient(135deg, #a78bfa, #f472b6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+  }
+  .package-card .pkg-keys-label {
+    font-size: 10px; color: #555;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    display: block; margin-bottom: 2px;
+  }
+  .package-card .pkg-price {
+    font-size: 16px; font-weight: 800;
+    color: #4ade80; letter-spacing: -0.02em;
+  }
+  .package-card .pkg-price-label {
+    font-size: 10px; color: #555;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    display: block; margin-bottom: 2px; text-align: right;
+  }
+  .upgrade-options {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .upgrade-option {
+    background: #050505; border: 1px solid #1a1a1a;
+    border-radius: 14px; padding: 16px;
+    cursor: pointer; transition: .2s;
+    display: flex; align-items: center; gap: 14px;
+    text-align: left;
+  }
+  .upgrade-option:hover {
+    border-color: rgba(139,92,246,0.4);
+    background: #080808;
+    transform: translateX(3px);
+  }
+  .upgrade-option .uo-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .upgrade-option .uo-icon.ads {
+    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(239,68,68,0.15));
+    border: 1px solid rgba(245,158,11,0.3);
+  }
+  .upgrade-option .uo-icon.pkg {
+    background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.15));
+    border: 1px solid rgba(139,92,246,0.3);
+  }
+  .upgrade-option .uo-icon.gen {
+    background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(16,185,129,0.15));
+    border: 1px solid rgba(34,197,94,0.3);
+  }
+  .upgrade-option .uo-body { flex: 1; min-width: 0; }
+  .upgrade-option .uo-title {
+    font-size: 14px; font-weight: 700;
+    color: #fff; margin-bottom: 3px;
+  }
+  .upgrade-option .uo-desc {
+    font-size: 11.5px; color: #666;
+    line-height: 1.5;
+  }
+  .upgrade-option .uo-arrow {
+    color: #333; font-size: 18px;
+    transition: .2s;
+  }
+  .upgrade-option:hover .uo-arrow { color: #a78bfa; }
+  .inapp-warning {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(16px);
+    z-index: 9999;
+    align-items: center; justify-content: center;
+    padding: 20px;
+    animation: fadeIn .3s ease;
+  }
+  .inapp-warning.show { display: flex; }
+  .inapp-card {
+    width: 100%; max-width: 360px;
+    background: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    border-radius: 24px;
+    padding: 32px 24px 24px;
+    text-align: center;
+    position: relative; overflow: hidden;
+    transform: scale(0.9);
+    animation: popIn .4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  .inapp-card::before {
+    content: ''; position: absolute; top: -100px; left: 50%;
+    transform: translateX(-50%); width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(245,158,11,0.2), transparent 70%);
+    pointer-events: none;
+  }
+  .inapp-icon {
+    width: 68px; height: 68px; border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+    box-shadow: 0 0 40px rgba(245,158,11,0.4);
+    font-size: 32px;
+    animation: popIn .5s cubic-bezier(0.34, 1.56, 0.64, 1) .1s both;
+  }
+  .inapp-title {
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 10px; letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #fff, #a3a3a3);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .inapp-sub {
+    font-size: 13px; color: #888;
+    line-height: 1.6; margin-bottom: 22px;
+  }
+  .inapp-sub b { color: #fbbf24; font-weight: 600; }
+  .btn-open-chrome {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, #4285f4, #1a73e8);
+    border: none; border-radius: 12px;
+    color: #fff; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: .2s;
+    display: flex; align-items: center;
+    justify-content: center; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .btn-open-chrome:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(66,133,244,0.3); }
+  .btn-open-chrome svg { width: 18px; height: 18px; fill: #fff; }
+  .btn-copy-link {
+    width: 100%; padding: 13px;
+    background: transparent; border: 1px solid #1a1a1a;
+    border-radius: 12px; color: #888;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: .2s;
+  }
+  .btn-copy-link:hover { background: #0a0a0a; color: #fff; border-color: #333; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="container" id="loginScreen">
+  <div class="content">
+    <h1>Amprem Generate <em>by SeanW</em></h1>
+    <p class="sub">Login buat mulai generate premium Alight Motion.</p>
+    <form id="loginForm" autocomplete="on">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="loginUser" placeholder="username lu" required autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginKey" placeholder="password lu" required autocomplete="current-password">
+      </div>
+      <button type="submit" id="btnLogin">Masuk</button>
+      <p class="hint">Belum punya akun? <a onclick="showRegister()">Daftar di sini</a></p>
+    </form>
+    <pre class="result" id="loginResult"></pre>
+  </div>
+</div>
+
+<!-- REGISTER SCREEN -->
+<div class="container hidden" id="registerScreen">
+  <div class="content">
+    <h1>Buat Akun <em>Baru</em></h1>
+    <p class="sub">Daftar dulu buat bisa akses generator premium.</p>
+    <form id="registerForm" autocomplete="off">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="regUser" placeholder="contoh: seanwuser01" required pattern="[a-zA-Z0-9_]{3,20}">
+        <div class="help-text">3-20 karakter, huruf/angka/underscore</div>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="regPass" placeholder="Min 6 karakter" required minlength="6" autocomplete="new-password">
+      </div>
+      <div class="form-group">
+        <label>Verifikasi Password</label>
+        <input type="password" id="regPassVerify" placeholder="Ulangi password" required minlength="6" autocomplete="new-password">
+      </div>
+      <button type="submit" id="btnRegister">Daftar</button>
+      <p class="hint">Udah punya akun? <a onclick="showLogin()">Login di sini</a></p>
+    </form>
+    <pre class="result" id="registerResult"></pre>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div class="container hidden" id="appScreen">
+  <div class="content">
+    <div class="user-badge">
+      <div class="info">
+        <span style="color:#555;">Login sebagai </span>
+        <span class="name" id="uName">-</span>
+        <span class="id-tag" id="uId" title="Klik untuk copy ID">-</span>
+      </div>
+      <button class="btn-mini" id="btnLogout" type="button">Logout</button>
+    </div>
+
+    <div class="admin-tabs hidden" id="adminTabs">
+      <button class="admin-tab active" data-tab="kelola">Kelola</button>
+      <button class="admin-tab" data-tab="daftar">Daftar</button>
+      <button class="admin-tab" data-tab="generator">Generate</button>
+    </div>
+
+    <div id="panelKelola" class="hidden">
+      <div class="admin-form">
+        <div class="title-form"><div class="dot"></div>Edit Limit & Durasi User</div>
+        <div class="form-group">
+          <label>User ID</label>
+          <input type="text" id="mgId" placeholder="USR-XXXXXX" autocomplete="off">
+          <div class="help-text">Cek di tab <b>Daftar</b> → klik user</div>
+        </div>
+        <div class="row-2">
+          <div class="form-group">
+            <label>Limit Key</label>
+            <input type="number" id="mgLimit" placeholder="0" min="0" value="1">
+            <div class="help-text"><code>0</code> = unlimited</div>
+          </div>
+          <div class="form-group">
+            <label>Durasi (hari)</label>
+            <input type="number" id="mgDays" placeholder="30" min="0" value="30">
+            <div class="help-text"><code>1</code> = 1 hari, <code>0</code> = unlimited</div>
+          </div>
+        </div>
+        <button type="button" id="btnSaveUser">Simpan Perubahan</button>
+        <button type="button" class="btn-ghost" id="btnResetUsed">Reset Pemakaian</button>
+        <button type="button" class="btn-ghost btn-danger" id="btnDeleteUser">Hapus User</button>
+      </div>
+      <pre class="result" id="adminResult"></pre>
+    </div>
+
+    <div id="panelDaftar" class="hidden">
+      <div class="admin-head">
+        <div class="title">Daftar User</div>
+        <div class="badge" id="userCount">0 USERS</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="label">Total User</div>
+          <div class="value purple" id="dashTotal">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Total Generate</div>
+          <div class="value green" id="dashGen">0</div>
+        </div>
+      </div>
+      <div class="user-list" id="userListEl">
+        <div class="empty-state"><div class="ico">👥</div>Belum ada user terdaftar.</div>
+      </div>
+    </div>
+
+    <div id="generatorSection">
+      <div class="stats-grid hidden" id="userStats">
+        <div class="stat-card">
+          <div class="label">Sisa Generate</div>
+          <div class="value" id="statLimit">-</div>
+          <div class="sub-v" id="statLimitSub">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Masa Aktif</div>
+          <div class="value" id="statExp">-</div>
+          <div class="sub-v" id="statExpSub">-</div>
+        </div>
+      </div>
+
+      <div id="upgradeHub" class="hidden">
+        <h1>Menu <em>Utama</em></h1>
+        <p class="sub">Pilih apa yang mau lu lakuin.</p>
+        <div class="upgrade-options">
+          <div class="upgrade-option" data-action="generate">
+            <div class="uo-icon gen">🚀</div>
+            <div class="uo-body">
+              <div class="uo-title">Generate Premium</div>
+              <div class="uo-desc">Aktivasi akun Alight Motion jadi <b style="color:#4ade80;">premium</b></div>
+            </div>
+            <div class="uo-arrow">›</div>
+          </div>
+          <div class="upgrade-option" data-action="ads">
+            <div class="uo-icon ads">🎬</div>
+            <div class="uo-body">
+              <div class="uo-title">Tambah Key Gratis</div>
+              <div class="uo-desc" id="adsDesc">Tonton iklan · dapet <b style="color:#4ade80;">+1 key</b></div>
+            </div>
+            <div class="uo-arrow">›</div>
+          </div>
+          <div class="upgrade-option" data-action="package">
+            <div class="uo-icon pkg">🎁</div>
+            <div class="uo-body">
+              <div class="uo-title">Paket Key</div>
+              <div class="uo-desc">Beli paket · dapet banyak key sekaligus</div>
+            </div>
+            <div class="uo-arrow">›</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="step1" class="hidden">
+        <h1>Alight Motion <em>Premium</em></h1>
+        <p class="sub">Masukkan email, kami kirim magic link buat aktivasi premium.</p>
+        <div class="steps">
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+        </div>
+        <form id="emailForm">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="userEmail" placeholder="kamu@gmail.com" required autocomplete="email">
+          </div>
+          <button type="submit" id="btnSend">Kirim Magic Link</button>
+          <p class="hint">Link dikirim ke inbox. Cek folder spam juga ya.</p>
+        </form>
+      </div>
+
+      <div id="step2" class="hidden">
+        <h1>Masukkan <em>Magic Key</em></h1>
+        <p class="sub">Long-press link di email → "Copy link" → paste di bawah.</p>
+        <div class="steps">
+          <div class="step-dot active"></div>
+          <div class="step-dot active"></div>
+        </div>
+        <div class="info-box">
+          <div class="icon">📩</div>
+          <div>
+            <div style="color:#555; font-size:11px; letter-spacing:0.05em; text-transform:uppercase;">Terkirim ke</div>
+            <strong id="sentTo">-</strong>
+          </div>
+        </div>
+        <form id="keyForm">
+          <div class="form-group">
+            <label>Magic Key / Link</label>
+            <input type="text" id="magicKey" placeholder="Paste full link dari email..." required autocomplete="off">
+          </div>
+          <button type="submit" id="btnVerify">Verify &amp; Aktivasi Premium</button>
+          <div class="progress-bar" id="progBar"><span></span></div>
+          <button type="button" class="btn-ghost" id="btnResend">Kirim Ulang</button>
+          <button type="button" class="btn-ghost" id="btnBack">Ganti Email</button>
+        </form>
+      </div>
+
+      <div id="adsSection" class="hidden">
+        <div class="ads-header">
+          <div class="icon-big"><span>🎬</span></div>
+          <h1>Tonton Iklan</h1>
+          <p class="sub" style="margin-bottom:14px;">Tonton 1 iklan · dapet +1 key gratis.</p>
+        </div>
+        <div class="progress-dots" id="adsDots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <div class="step-counter">
+          <span class="num" id="adsStepNum">1</span>
+          <span class="total">/ 2</span>
+        </div>
+        <div class="instruction-box">
+          <div class="ib-title">📋 Cara Klaim</div>
+          <ol>
+            <li>Klik tombol <b>Buka Iklan</b> di bawah</li>
+            <li>Iklan akan kebuka di tab baru</li>
+            <li>Tunggu <b>30 detik</b> sampai iklan selesai</li>
+            <li>Balik ke tab ini & jawab konfirmasi</li>
+          </ol>
+        </div>
+        <button type="button" class="ad-cta" id="btnOpenAd">
+          <span>🚀</span> Buka Iklan
+        </button>
+        <button type="button" class="btn-ghost" id="btnCancelAds">← Batal & Kembali ke Menu</button>
+      </div>
+
+      <div id="packageSection" class="hidden">
+        <div class="ads-header">
+          <div class="icon-big" style="background:linear-gradient(135deg,#8b5cf6,#ec4899);"><span>🎁</span></div>
+          <h1>Pilih <em>Paket</em></h1>
+          <p class="sub" style="margin-bottom:14px;">Pilih paket yang cocok buat lu.</p>
+        </div>
+        <div class="package-list" id="packageList"></div>
+        <button type="button" class="btn-ghost" id="btnBackFromPkg">← Kembali</button>
+      </div>
+
+      <pre class="result" id="result"></pre>
+
+      <div id="historySection" class="hidden">
+        <div class="section-title">
+          Riwayat Generate
+          <span class="count" id="historyCount">0</span>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL (Premium) -->
+<div class="overlay" id="successModal">
+  <div class="modal-card" id="successCard">
+    <div class="check-circle">
+      <svg class="check-svg" viewBox="0 0 24 24"><path d="M4 12 L10 18 L20 6" /></svg>
+    </div>
+    <div class="modal-title">Premium Aktif! 🎉</div>
+    <p class="modal-sub">
+      Akun <strong id="succEmail">-</strong> berhasil diaktivasi.<br>
+      Buka aplikasi Alight Motion sekarang.
+    </p>
+    <div class="modal-info">
+      <div class="row"><span>Status</span><span style="color:#4ade80;">● Premium</span></div>
+      <div class="row"><span>Order ID</span><span id="succOrder">-</span></div>
+      <div class="row"><span>UID</span><span id="succUid">-</span></div>
+    </div>
+    <button class="btn-success" onclick="closeSuccess()">Selesai</button>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL (Reward) -->
+<div class="overlay" id="rewardModal">
+  <div class="modal-card">
+    <div class="check-circle" style="background:linear-gradient(135deg,#f59e0b,#ef4444);box-shadow:0 0 40px rgba(245,158,11,0.4);">
+      <svg class="check-svg" viewBox="0 0 24 24"><path d="M4 12 L10 18 L20 6" /></svg>
+    </div>
+    <div class="modal-title">Selamat! 🎉</div>
+    <p class="modal-sub">
+      Lu dapet <strong id="rewardAmount">+1 key</strong> tambahan!<br>
+      Sisa key lu sekarang: <strong id="rewardTotal">2</strong>
+    </p>
+    <button class="btn-success" onclick="closeReward()">Lanjut Generate</button>
+  </div>
+</div>
+
+<!-- KONFIRMASI IKLAN MODAL -->
+<div class="overlay" id="adsConfirmModal">
+  <div class="modal-card confirm-ads-card">
+    <div class="confirm-ads-icon"><span>🎬</span></div>
+    <div class="confirm-ads-title">Sudah Nonton Iklannya?</div>
+    <p class="confirm-ads-sub">
+      Jawab dengan <b>jujur</b> ya.<br>
+      Kalau udah selesai nonton, klik <b>"Ya, Sudah"</b> buat lanjut.
+    </p>
+    <div class="btn-row-2">
+      <button type="button" class="btn-no" id="btnAdsNo">Belum</button>
+      <button type="button" class="btn-success" id="btnAdsYes">Ya, Sudah</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIF COOLDOWN IKLAN -->
+<div class="overlay" id="adsCooldownModal">
+  <div class="modal-card confirm-ads-card">
+    <div class="confirm-ads-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 0 40px rgba(239,68,68,0.4);"><span>⏳</span></div>
+    <div class="confirm-ads-title" style="color:#f87171;">Batas Tercapai</div>
+    <p class="confirm-ads-sub" id="adsCooldownMsg">
+      Maksimal nonton iklan 2, coba lagi Minggu depan.
+    </p>
+    <button class="btn-success" onclick="closeAdsCooldown()">Mengerti</button>
+  </div>
+</div>
+
+<!-- WA MODAL -->
+<div class="overlay" id="waModal">
+  <div class="modal-card wa-card">
+    <div class="wa-icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+      </svg>
+    </div>
+    <div class="wa-title">Join Saluran WhatsApp</div>
+    <p class="wa-sub">
+      Dapatkan update terbaru, tips, dan info penting dari <strong>Amprem Generate by SeanW</strong>. Yuk join dulu!
+    </p>
+    <button class="btn-wa" onclick="joinWA()">Join Saluran Sekarang</button>
+    <button class="btn-ghost" onclick="closeWA()">Nanti aja</button>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="overlay" id="confirmModal">
+  <div class="modal-card">
+    <div class="modal-title" id="confirmTitle">Konfirmasi</div>
+    <p class="modal-sub" id="confirmMsg">Yakin?</p>
+    <button class="btn-danger" id="btnConfirmYes" style="margin-bottom:8px;">Ya, Lanjutkan</button>
+    <button class="btn-ghost" onclick="closeConfirm()">Batal</button>
+  </div>
+</div>
+
+<!-- PAKET DETAIL MODAL -->
+<div class="overlay" id="pkgModal">
+  <div class="modal-card">
+    <div class="modal-title" id="pkgTitle">Paket</div>
+    <p class="modal-sub" id="pkgDesc">Detail paket</p>
+    <div class="modal-info" id="pkgInfo"></div>
+    <button class="btn-wa" id="btnPkgAction" style="margin-bottom:8px;">Hubungi Admin</button>
+    <button class="btn-ghost" onclick="closePkg()">Tutup</button>
+  </div>
+</div>
+
+<!-- IN-APP BROWSER WARNING -->
+<div class="inapp-warning" id="inappWarning">
+  <div class="inapp-card">
+    <div class="inapp-icon">⚠️</div>
+    <div class="inapp-title">Buka di Chrome Dulu</div>
+    <p class="inapp-sub">
+      Buat nonton iklan & dapetin key, lu <b>wajib</b> buka web ini di <b>Chrome / Safari</b>.<br>
+      Browser dalam aplikasi (WA, IG, TikTok) <b>gak support iklan</b>.
+    </p>
+    <button class="btn-open-chrome" id="btnOpenChrome">
+      <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 18c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6zm0-10c-2.209 0-4 1.791-4 4s1.791 4 4 4 4-1.791 4-4-1.791-4-4-4z"/></svg>
+      Buka di Chrome
+    </button>
+    <button class="btn-copy-link" id="btnCopyLink">📋 Copy Link Web</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js';
+  import { getDatabase, ref, get, set, update, remove, onValue } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-database.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCc9cuuc1IIwa1qWFRdGHB5UR-vSjpS_60",
+    authDomain: "amprembyvolz.firebaseapp.com",
+    databaseURL: "https://amprembyvolz-default-rtdb.firebaseio.com",
+    projectId: "amprembyvolz",
+    storageBucket: "amprembyvolz.firebasestorage.app",
+    messagingSenderId: "530230884475",
+    appId: "1:530230884475:web:b99efa6c4d3ffb2ab88ade"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // ============================================================
+  //  KONFIGURASI APP
+  // ============================================================
+  const WA_CHANNEL_URL = "https://whatsapp.com/channel/0029VbAiaypBA1f6hkaOr20T";
+  const WA_ADMIN_NUMBER = "6289654662435";
+  const ADSTERRA_DIRECT_LINK = "https://www.profitableratecpmnetwork.com/p3ytxu9sx?key=a20065b00860174b06b0e9d2c2c5eedc";
+
+  const AD_WAIT_SECONDS = 30;
+  const MAX_ADS_PER_PERIOD = 2;                              // ⬅ MAX 2x nonton iklan
+  const ADS_COOLDOWN_MS = 8 * 24 * 60 * 60 * 1000;           // ⬅ 8 hari cooldown
+
+  const ADMIN_USERNAME = "SeanW";
+  const ADMIN_PASSWORD = "08292012";
+
+  // ⬇️ Paket + harga
+  const PACKAGES = [
+    { id: 'hemat',   name: 'Paket Hemat',   keys: 10,  price: 5000,  featured: false, desc: 'Cocok buat yang butuh beberapa akun premium' },
+    { id: 'standar', name: 'Paket Standar', keys: 25,  price: 10000, featured: false, desc: 'Lebih hemat, dapet 25 key sekaligus' },
+    { id: 'premium', name: 'Paket Premium', keys: 50,  price: 18000, featured: true,  desc: 'Best value! Dapet 50 key + prioritas' },
+    { id: 'sultan',  name: 'Paket Sultan',  keys: 120, price: 35000, featured: false, desc: 'Buat reseller / yang butuh banyak' },
+  ];
+
+  const CFG = {
+    key: 'AIzaSyDtG1AU22ErnQD60AzBAcaknySiz9_CEq0',
+    idt: 'https://www.googleapis.com/identitytoolkit/v3/relyingparty',
+    vfy: 'https://us-central1-alight-creative.cloudfunctions.net/verifyPurchase'
+  };
+  const H_FIREBASE = {
+    'Content-Type': 'application/json',
+    'x-android-package': 'com.alightcreative.motion',
+    'x-android-cert': 'ECA6BF91B8715A6F810ED0BBFC65B6CD578F52A8',
+    'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 15; 23127PN0CC Build/BP1A.250505.005)'
+  };
+  const H_VERIFY = {
+    'Content-Type': 'application/json; charset=utf-8',
+    'User-Agent': 'okhttp/3.12.1'
+  };
+  const SEND_COOLDOWN_MS = 30000;
+
+  const $ = id => document.getElementById(id);
+  const toastEl = $('toast');
+  let currentUser = null;
+  let currentEmail = '';
+  let selectedUserId = null;
+  let lastSendTime = 0;
+  let confirmCallback = null;
+  let adsState = { step: 0, adOpened: false };
+
+  async function fbGetUsers() {
+    try { const s = await get(ref(db, 'users')); return s.val() || {}; }
+    catch (e) { console.error(e); return {}; }
+  }
+  async function fbSaveUser(username, data) {
+    try { await set(ref(db, 'users/' + username), data); return true; }
+    catch (e) { console.error(e); return false; }
+  }
+  async function fbUpdateUser(username, patch) {
+    try { await update(ref(db, 'users/' + username), patch); return true; }
+    catch (e) { console.error(e); return false; }
+  }
+  async function fbDeleteUser(username) {
+    try { await remove(ref(db, 'users/' + username)); return true; }
+    catch (e) { console.error(e); return false; }
+  }
+
+  function isInAppBrowser() {
+    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    if (/FBAN|FBAV|Instagram|Line|WhatsApp|Twitter|Telegram|MicroMessenger|TikTok|SnapChat|LinkedIn|Pinterest|Slack|Discord|Viber|WeChat|FB_IAB|FB4A|FBIOS|Barcelona/i.test(ua)) return true;
+    if (/(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(ua)) return true;
+    if (/Android.*; wv\)/.test(ua)) return true;
+    return false;
+  }
+  function getChromeIntent() {
+    const url = window.location.href;
+    return `intent://${url.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=com.android.chrome;end`;
+  }
+  function showInAppWarning() {
+    const w = $('inappWarning');
+    if (w) { w.classList.add('show'); document.body.style.overflow = 'hidden'; }
+  }
+  function bindInAppButtons() {
+    const bc = $('btnOpenChrome'), bp = $('btnCopyLink');
+    if (bc) bc.onclick = () => {
+      const url = window.location.href;
+      const ua = navigator.userAgent || '';
+      if (/android/i.test(ua)) window.location.href = getChromeIntent();
+      else if (/iphone|ipad|ipod/i.test(ua)) {
+        window.location.href = `googlechrome://${url.replace(/^https?:\/\//, '')}`;
+        setTimeout(() => toast('Kalau gak kebuka, klik "Copy Link" terus paste di Chrome', 'err'), 1500);
+      } else window.open(url, '_blank');
+    };
+    if (bp) bp.onclick = async () => {
+      const ok = await copyToClipboard(window.location.href);
+      toast(ok ? 'Link dicopy! Paste di Chrome ya' : 'Gagal copy', ok ? 'ok' : 'err');
+    };
+  }
+
+  function toast(msg, type = 'ok') {
+    toastEl.innerHTML = (type === 'ok' ? '✓ ' : '✕ ') + msg;
+    toastEl.className = 'toast show ' + type;
+    clearTimeout(toastEl._t);
+    toastEl._t = setTimeout(() => toastEl.classList.remove('show'), 2800);
+  }
+  function showResult(el, data, ok = true) {
+    if (!el) return;
+    el.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+    el.className = 'result show ' + (ok ? 'ok' : 'err');
+  }
+  function clearResult(el) { if (el) { el.className = 'result'; el.textContent = ''; } }
+  function setLoading(btn, loading, text = '') {
+    if (loading) {
+      btn.dataset.orig = btn.textContent;
+      btn.innerHTML = '<span class="spin"></span>Loading...';
+      btn.disabled = true;
+    } else {
+      btn.textContent = text || btn.dataset.orig;
+      btn.disabled = false;
+    }
+  }
+  function errMsg(e) {
+    const d = e?.response?.data;
+    if (d) return typeof d === 'object' ? JSON.stringify(d) : String(d);
+    return e.message || String(e);
+  }
+  function fmtDate(ts) {
+    if (!ts) return '-';
+    return new Date(ts).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+  function fmtDateTime(ts) {
+    if (!ts) return '-';
+    return new Date(ts).toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+  function daysLeft(expiresAt) {
+    if (!expiresAt) return null;
+    return Math.ceil((expiresAt - Date.now()) / (24 * 60 * 60 * 1000));
+  }
+  function fmtRupiah(n) { return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); }
+  async function copyToClipboard(text) {
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch {
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); document.body.removeChild(ta); return true; }
+      catch { document.body.removeChild(ta); return false; }
+    }
+  }
+  function extractCode(raw) {
+    if (!raw) return null;
+    let s = String(raw);
+    try { s = decodeURIComponent(s); } catch {}
+    try {
+      const u = new URL(s);
+      let c = u.searchParams.get('oobCode');
+      if (!c) {
+        const n = u.searchParams.get('link') || u.searchParams.get('q') || u.searchParams.get('url');
+        if (n) { try { c = new URL(n).searchParams.get('oobCode'); } catch {} }
+      }
+      if (c) return c.replace(/[^a-zA-Z0-9_-]/g, '');
+    } catch {}
+    const m = s.match(/oobCode=([a-zA-Z0-9_-]+)/i);
+    if (m) return m[1];
+    const t = raw.trim();
+    if (/^[a-zA-Z0-9_-]{10,}$/.test(t) && !t.includes('://')) return t;
+    return null;
+  }
+  function genUserId() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let s = 'USR-';
+    for (let i = 0; i < 6; i++) s += chars[Math.floor(Math.random() * chars.length)];
+    return s;
+  }
+  function hashKey(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) { h = ((h << 5) - h) + str.charCodeAt(i); h |= 0; }
+    return 'h_' + Math.abs(h).toString(36);
+  }
+  function getSession() {
+    try { return JSON.parse(localStorage.getItem('amp_session') || 'null'); }
+    catch { return null; }
+  }
+  function setSession(u) { localStorage.setItem('amp_session', JSON.stringify({ username: u, ts: Date.now() })); }
+  function clearSession() { localStorage.removeItem('amp_session'); }
+
+  function showScreen(id) {
+    ['loginScreen','registerScreen','appScreen'].forEach(s => $(s).classList.add('hidden'));
+    $(id).classList.remove('hidden');
+  }
+  function showLogin() { showScreen('loginScreen'); setTimeout(() => $('loginUser').focus(), 100); }
+  function showRegister() { showScreen('registerScreen'); setTimeout(() => $('regUser').focus(), 100); }
+  window.showLogin = showLogin;
+  window.showRegister = showRegister;
+
+  function confirmAction(title, msg, callback) {
+    $('confirmTitle').textContent = title;
+    $('confirmMsg').textContent = msg;
+    confirmCallback = callback;
+    $('confirmModal').classList.add('show');
+  }
+  function closeConfirm() { $('confirmModal').classList.remove('show'); confirmCallback = null; }
+  $('btnConfirmYes').addEventListener('click', () => {
+    const cb = confirmCallback; closeConfirm();
+    if (cb) cb();
+  });
+  window.closeConfirm = closeConfirm;
+
+  // ============ COOLDOWN MODAL ============
+  function showAdsCooldown(msg) {
+    $('adsCooldownMsg').textContent = msg;
+    $('adsCooldownModal').classList.add('show');
+  }
+  function closeAdsCooldown() { $('adsCooldownModal').classList.remove('show'); }
+  window.closeAdsCooldown = closeAdsCooldown;
+
+  function openPkg(pkg) {
+    $('pkgTitle').textContent = pkg.name;
+    $('pkgDesc').textContent = pkg.desc;
+    $('pkgInfo').innerHTML = `
+      <div class="row"><span>Jumlah Key</span><span style="color:#a78bfa;">${pkg.keys} key</span></div>
+      <div class="row"><span>Harga</span><span style="color:#4ade80;">${fmtRupiah(pkg.price)}</span></div>
+      <div class="row"><span>Estimasi</span><span>${pkg.keys} akun premium</span></div>
+      <div class="row"><span>Status</span><span style="color:#4ade80;">● Tersedia</span></div>
+    `;
+    const msg = encodeURIComponent(`Halo admin, saya mau beli *${pkg.name}*\nJumlah Key: ${pkg.keys}\nHarga: ${fmtRupiah(pkg.price)}\n\nUsername saya: @${currentUser?.username || '-'}\nUser ID: ${currentUser?.id || '-'}`);
+    $('btnPkgAction').onclick = () => {
+      window.open(`https://wa.me/${WA_ADMIN_NUMBER}?text=${msg}`, '_blank');
+      closePkg();
+      toast('Buka WhatsApp admin...');
+    };
+    $('pkgModal').classList.add('show');
+  }
+  function closePkg() { $('pkgModal').classList.remove('show'); }
+  window.closePkg = closePkg;
+
+  // ============ LOGIN ============
+  $('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = $('loginUser').value.trim().toLowerCase();
+    const key = $('loginKey').value;
+    const btn = $('btnLogin');
+    const resEl = $('loginResult');
+    clearResult(resEl);
+    if (!username) return toast('Masukkan username', 'err');
+    if (!key) return toast('Masukkan password', 'err');
+    setLoading(btn, true);
+
+    try {
+      const users = await fbGetUsers();
+      if (username === ADMIN_USERNAME) {
+        if (key !== ADMIN_PASSWORD) {
+          showResult(resEl, { error: 'Password admin salah' }, false);
+          toast('Password admin salah', 'err');
+          setLoading(btn, false, 'Masuk');
+          return;
+        }
+        if (!users[ADMIN_USERNAME]) {
+          users[ADMIN_USERNAME] = {
+            id: 'ADM-SeanW01', username: ADMIN_USERNAME,
+            keyHash: hashKey(ADMIN_PASSWORD), role: 'admin',
+            keyLimit: 0, keyUsed: 0, durationDays: 0,
+            createdAt: Date.now(), expiresAt: 0, generations: [],
+            adWatchCount: 0, adResetAt: 0
+          };
+          await fbSaveUser(ADMIN_USERNAME, users[ADMIN_USERNAME]);
+        }
+        currentUser = users[ADMIN_USERNAME];
+        setSession(ADMIN_USERNAME);
+        toast('Selamat datang, Admin 👑');
+        showApp();
+        setLoading(btn, false, 'Masuk');
+        return;
+      }
+      if (!users[username]) {
+        showResult(resEl, { error: 'Username belum terdaftar' }, false);
+        toast('Username belum terdaftar', 'err');
+        setLoading(btn, false, 'Masuk');
+        return;
+      }
+      if (users[username].keyHash !== hashKey(key)) {
+        showResult(resEl, { error: 'Password salah' }, false);
+        toast('Password salah', 'err');
+        setLoading(btn, false, 'Masuk');
+        return;
+      }
+      currentUser = users[username];
+      setSession(username);
+      toast('Login berhasil 👋');
+      showApp();
+    } catch (err) {
+      console.error(err);
+      showResult(resEl, { error: 'Gagal konek ke server' }, false);
+      toast('Gagal konek ke server', 'err');
+    } finally {
+      setLoading(btn, false, 'Masuk');
+    }
+  });
+
+  // ============ REGISTER ============
+  $('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = $('regUser').value.trim().toLowerCase();
+    const pass = $('regPass').value;
+    const pass2 = $('regPassVerify').value;
+    const btn = $('btnRegister');
+    const resEl = $('registerResult');
+    clearResult(resEl);
+
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+      showResult(resEl, { error: 'Username harus 3-20 karakter' }, false);
+      return toast('Username tidak valid', 'err');
+    }
+    if (pass.length < 6) { showResult(resEl, { error: 'Password minimal 6 karakter' }, false); return toast('Password kekurangan', 'err'); }
+    if (pass !== pass2) { showResult(resEl, { error: 'Password tidak cocok' }, false); return toast('Password tidak cocok', 'err'); }
+    if (username === ADMIN_USERNAME) { showResult(resEl, { error: 'Username ini tidak bisa dipakai' }, false); return toast('Username tidak bisa dipakai', 'err'); }
+
+    setLoading(btn, true);
+    try {
+      const users = await fbGetUsers();
+      if (users[username]) {
+        showResult(resEl, { error: 'Username sudah dipakai' }, false);
+        toast('Username sudah ada', 'err');
+        setLoading(btn, false, 'Daftar');
+        return;
+      }
+      const newUser = {
+        id: genUserId(), username, keyHash: hashKey(pass),
+        role: 'user', keyLimit: 1, keyUsed: 0, durationDays: 7,
+        createdAt: Date.now(), expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000),
+        generations: [],
+        adWatchCount: 0,       // ⬅ counter nonton iklan
+        adResetAt: 0           // ⬅ kapan cooldown berakhir
+      };
+      const ok = await fbSaveUser(username, newUser);
+      if (!ok) throw new Error('Gagal simpan');
+
+      showResult(resEl, {
+        success: true, message: 'Akun berhasil dibuat!',
+        user_id: newUser.id, username: newUser.username,
+        limit: newUser.keyLimit, masa_aktif: '7 hari'
+      }, true);
+      toast('Akun dibuat! ID: ' + newUser.id);
+
+      setTimeout(() => {
+        currentUser = newUser;
+        setSession(username);
+        $('registerForm').reset();
+        clearResult(resEl);
+        showApp();
+      }, 1100);
+    } catch (err) {
+      console.error(err);
+      showResult(resEl, { error: 'Gagal daftar: ' + err.message }, false);
+      toast('Gagal daftar', 'err');
+    } finally {
+      setLoading(btn, false, 'Daftar');
+    }
+  });
+
+  async function showApp() {
+    showScreen('appScreen');
+    $('uName').textContent = '@' + currentUser.username;
+    $('uId').textContent = currentUser.id;
+    $('uId').onclick = async () => {
+      const ok = await copyToClipboard(currentUser.id);
+      toast(ok ? 'ID dicopy: ' + currentUser.id : 'Gagal copy', ok ? 'ok' : 'err');
+    };
+    const isAdmin = currentUser.role === 'admin';
+
+    if (isAdmin) {
+      $('adminTabs').classList.remove('hidden');
+      $('userStats').classList.add('hidden');
+      $('upgradeHub').classList.add('hidden');
+      $('adsSection').classList.add('hidden');
+      $('packageSection').classList.add('hidden');
+      setAdminTab('kelola');
+    } else {
+      $('adminTabs').classList.add('hidden');
+      $('panelKelola').classList.add('hidden');
+      $('panelDaftar').classList.add('hidden');
+      $('generatorSection').classList.remove('hidden');
+      $('userStats').classList.remove('hidden');
+      renderUserStats();
+      renderHistory();
+      updateAdsDesc();
+      showUpgradeHub();
+      setTimeout(() => $('waModal').classList.add('show'), 900);
+    }
+  }
+
+  // Update deskripsi ads
+  function updateAdsDesc() {
+    const el = $('adsDesc');
+    if (!el || !currentUser || currentUser.role === 'admin') return;
+    const count = currentUser.adWatchCount || 0;
+    const resetAt = currentUser.adResetAt || 0;
+    if (count >= MAX_ADS_PER_PERIOD && Date.now() < resetAt) {
+      const days = Math.ceil((resetAt - Date.now()) / (24 * 60 * 60 * 1000));
+      el.innerHTML = `⏳ Cooldown · coba lagi dalam <b style="color:#fbbf24;">${days} hari</b>`;
+    } else {
+      el.innerHTML = `Tonton iklan · dapet <b style="color:#4ade80;">+1 key</b> (${count}/${MAX_ADS_PER_PERIOD})`;
+    }
+  }
+
+  function hideAllUserViews() {
+    $('upgradeHub').classList.add('hidden');
+    $('step1').classList.add('hidden');
+    $('step2').classList.add('hidden');
+    $('adsSection').classList.add('hidden');
+    $('packageSection').classList.add('hidden');
+    $('historySection').classList.add('hidden');
+    clearResult($('result'));
+  }
+
+  function showUpgradeHub() {
+    hideAllUserViews();
+    $('upgradeHub').classList.remove('hidden');
+    updateAdsDesc();
+    $('upgradeHub').querySelectorAll('.upgrade-option').forEach(opt => {
+      opt.onclick = () => {
+        const action = opt.dataset.action;
+        if (action === 'generate') { if (checkUserStatus()) return; showGeneratorForm(); }
+        if (action === 'ads') startAdsFlow();
+        if (action === 'package') showPackages();
+      };
+    });
+    renderHistory();
+  }
+
+  function showGeneratorForm() {
+    hideAllUserViews();
+    const step1 = $('step1');
+    step1.innerHTML = `
+      <h1>Alight Motion <em>Premium</em></h1>
+      <p class="sub">Masukkan email, kami kirim magic link buat aktivasi premium.</p>
+      <div class="steps"><div class="step-dot active"></div><div class="step-dot"></div></div>
+      <form id="emailForm">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="userEmail" placeholder="kamu@gmail.com" required autocomplete="email">
+        </div>
+        <button type="submit" id="btnSend">Kirim Magic Link</button>
+        <p class="hint">Link dikirim ke inbox. Cek folder spam juga ya.</p>
+      </form>
+      <button type="button" class="btn-ghost" id="btnBackToHub">← Kembali ke Menu</button>
+    `;
+    step1.classList.remove('hidden');
+    bindEmailForm();
+    $('btnBackToHub').onclick = () => showUpgradeHub();
+  }
+
+  function checkUserStatus() {
+    const expired = currentUser.expiresAt && Date.now() > currentUser.expiresAt;
+    const limitReached = currentUser.keyLimit > 0 && currentUser.keyUsed >= currentUser.keyLimit;
+    if (expired) { showLockedState('⏰', 'Akun Kadaluarsa', `Masa aktif habis pada ${fmtDate(currentUser.expiresAt)}.`); return true; }
+    if (limitReached) { showLockedState('🚫', 'Limit Generate Habis', `Jatah generate habis (${currentUser.keyUsed}/${currentUser.keyLimit}).`); return true; }
+    return false;
+  }
+
+  function renderUserStats() {
+    if (!currentUser || currentUser.role === 'admin') return;
+    const l = currentUser.keyLimit;
+    const u = currentUser.keyUsed;
+    const isUnlimited = l === 0;
+    $('statLimit').textContent = isUnlimited ? '∞' : Math.max(0, l - u);
+    $('statLimit').className = 'value ' + (isUnlimited ? 'purple' : (l - u > 0 ? 'green' : 'red'));
+    $('statLimitSub').textContent = isUnlimited ? 'Unlimited' : `${u} / ${l} terpakai`;
+    const dl = daysLeft(currentUser.expiresAt);
+    if (dl === null) {
+      $('statExp').textContent = '∞'; $('statExp').className = 'value purple'; $('statExpSub').textContent = 'Tanpa batas';
+    } else if (dl <= 0) {
+      $('statExp').textContent = 'Expired'; $('statExp').className = 'value red'; $('statExpSub').textContent = fmtDate(currentUser.expiresAt);
+    } else {
+      $('statExp').textContent = dl + ' hari';
+      $('statExp').className = 'value ' + (dl <= 3 ? 'red' : (dl <= 7 ? 'amber' : 'green'));
+      $('statExpSub').textContent = 's/d ' + fmtDate(currentUser.expiresAt);
+    }
+  }
+
+  function showLockedState(icon, title, message) {
+    hideAllUserViews();
+    const step1 = $('step1');
+    step1.innerHTML = `
+      <div style="text-align:center;padding:12px 0;">
+        <div style="font-size:46px;margin-bottom:12px;">${icon}</div>
+        <h1 style="margin-bottom:10px;">${title}</h1>
+        <p class="sub" style="margin-bottom:18px;">${message}</p>
+        <div class="limit-badge used" style="text-align:left;">
+          <span class="ico">💬</span>
+          <span>${currentUser.keyLimit === 0 ? 'Hubungi admin buat perpanjang.' : 'Klik tombol di bawah buat nambah key.'}</span>
+        </div>
+        <button class="btn-purple" id="btnGoUpgrade" style="margin-top:6px;">🎁 Tambah Key</button>
+        <button class="btn-wa" onclick="joinWA()" style="margin-top:6px;">Hubungi Admin</button>
+      </div>
+    `;
+    step1.classList.remove('hidden');
+    $('btnGoUpgrade').onclick = () => showUpgradeHub();
+  }
+
+  function renderHistory() {
+    if (!currentUser || currentUser.role === 'admin') return;
+    const gens = currentUser.generations || [];
+    const sec = $('historySection');
+    if (gens.length === 0) { sec.classList.add('hidden'); return; }
+    sec.classList.remove('hidden');
+    $('historyCount').textContent = gens.length;
+    $('historyList').innerHTML = gens.slice().reverse().map(g => `
+      <div class="history-item">
+        <div class="h-email">${g.email || '-'}</div>
+        <div class="h-meta">${fmtDateTime(g.at)}</div>
+        <div class="h-order">${(g.orderId || '-').substring(0, 24)}...</div>
+      </div>
+    `).join('');
+  }
+
+  function setAdminTab(tab) {
+    document.querySelectorAll('.admin-tab').forEach(t => { t.classList.toggle('active', t.dataset.tab === tab); });
+    $('panelKelola').classList.toggle('hidden', tab !== 'kelola');
+    $('panelDaftar').classList.toggle('hidden', tab !== 'daftar');
+    $('generatorSection').classList.toggle('hidden', tab !== 'generator');
+    if (tab === 'daftar') renderUserList();
+    if (tab === 'generator') {
+      hideAllUserViews();
+      $('step1').classList.remove('hidden');
+      $('step2').classList.add('hidden');
+      const step1 = $('step1');
+      if (!step1.querySelector('#emailForm')) {
+        step1.innerHTML = `
+          <h1>Alight Motion <em>Premium</em></h1>
+          <p class="sub">Masukkan email, kami kirim magic link buat aktivasi premium.</p>
+          <div class="steps"><div class="step-dot active"></div><div class="step-dot"></div></div>
+          <form id="emailForm">
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="userEmail" placeholder="kamu@gmail.com" required autocomplete="email">
+            </div>
+            <button type="submit" id="btnSend">Kirim Magic Link</button>
+            <p class="hint">Link dikirim ke inbox. Cek folder spam juga ya.</p>
+          </form>
+        `;
+        bindEmailForm();
+      }
+    }
+  }
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', () => setAdminTab(tab.dataset.tab));
+  });
+
+  async function renderUserList() {
+    const el = $('userListEl');
+    el.innerHTML = '<div class="empty-state">Loading data dari server...</div>';
+    const users = await fbGetUsers();
+    const list = Object.values(users).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    $('userCount').textContent = list.length + ' USERS';
+    const totalGen = list.reduce((sum, u) => sum + (u.keyUsed || 0), 0);
+    $('dashTotal').textContent = list.length;
+    $('dashGen').textContent = totalGen;
+    if (list.length === 0) {
+      el.innerHTML = '<div class="empty-state"><div class="ico">👥</div>Belum ada user terdaftar.</div>';
+      return;
+    }
+    el.innerHTML = list.map(u => {
+      const expired = u.expiresAt && Date.now() > u.expiresAt;
+      const limitInfo = u.keyLimit === 0
+        ? '<span class="pill green">∞ Key</span>'
+        : `<span class="pill ${u.keyUsed >= u.keyLimit ? 'red' : 'amber'}">${u.keyUsed}/${u.keyLimit} Key</span>`;
+      const expInfo = u.expiresAt === 0
+        ? '<span class="pill green">∞ Masa</span>'
+        : `<span class="pill ${expired ? 'red' : 'green'}">${expired ? 'Expired' : daysLeft(u.expiresAt) + ' hari'}</span>`;
+      const adsInfo = `<span class="pill purple">Iklan: ${u.adWatchCount || 0}/${MAX_ADS_PER_PERIOD}</span>`;
+      const roleBadge = u.role === 'admin' ? '<span class="badge-role admin">ADMIN</span>' : '';
+      return `
+        <div class="user-item ${selectedUserId === u.id ? 'selected' : ''}" data-uid="${u.id}" data-uname="${u.username}">
+          <div class="top">
+            <div class="uname">@${u.username} ${roleBadge}</div>
+            <div class="uid" data-copy="${u.id}" title="Klik untuk copy ID">${u.id}</div>
+          </div>
+          <div class="meta">${limitInfo}${expInfo}${adsInfo}</div>
+        </div>
+      `;
+    }).join('');
+    el.querySelectorAll('.user-item').forEach(item => {
+      item.addEventListener('click', async (ev) => {
+        if (ev.target.classList.contains('uid')) {
+          ev.stopPropagation();
+          const uid = ev.target.dataset.copy;
+          copyToClipboard(uid).then(ok => toast(ok ? 'ID dicopy: ' + uid : 'Gagal copy', ok ? 'ok' : 'err'));
+          return;
+        }
+        const uname = item.dataset.uname;
+        const users = await fbGetUsers();
+        const user = users[uname];
+        if (!user) return;
+        selectedUserId = user.id;
+        $('mgId').value = user.id;
+        $('mgLimit').value = user.keyLimit;
+        $('mgDays').value = user.durationDays || 0;
+        setAdminTab('kelola');
+        renderUserList();
+        toast('User @' + user.username + ' dipilih');
+      });
+    });
+  }
+
+  $('btnSaveUser').addEventListener('click', async () => {
+    const uid = $('mgId').value.trim().toUpperCase();
+    const limit = parseInt($('mgLimit').value);
+    const days = parseInt($('mgDays').value);
+    if (!uid) return toast('Masukkan User ID', 'err');
+    if (isNaN(limit) || limit < 0) return toast('Limit tidak valid', 'err');
+    if (isNaN(days) || days < 0) return toast('Durasi tidak valid', 'err');
+
+    const users = await fbGetUsers();
+    const target = Object.values(users).find(u => u.id === uid);
+    if (!target) {
+      showResult($('adminResult'), { error: 'User ID tidak ditemukan: ' + uid }, false);
+      return toast('User ID tidak ditemukan', 'err');
+    }
+    const patch = {
+      keyLimit: limit,
+      durationDays: days,
+      expiresAt: days === 0 ? 0 : Date.now() + (days * 24 * 60 * 60 * 1000)
+    };
+    const ok = await fbUpdateUser(target.username, patch);
+    if (!ok) return toast('Gagal update', 'err');
+    showResult($('adminResult'), {
+      success: true, message: 'User berhasil diupdate',
+      user: {
+        id: target.id, username: target.username,
+        keyLimit: limit === 0 ? '∞ unlimited' : limit,
+        durationDays: days === 0 ? '∞ unlimited' : days + ' hari',
+        expiresAt: patch.expiresAt === 0 ? 'unlimited' : fmtDate(patch.expiresAt)
+      }
+    }, true);
+    toast('User @' + target.username + ' diupdate ✓');
+    renderUserList();
+  });
+
+  $('btnResetUsed').addEventListener('click', async () => {
+    const uid = $('mgId').value.trim().toUpperCase();
+    if (!uid) return toast('Masukkan User ID', 'err');
+    const users = await fbGetUsers();
+    const target = Object.values(users).find(u => u.id === uid);
+    if (!target) return toast('User ID tidak ditemukan', 'err');
+    confirmAction('Reset Pemakaian', `Reset counter key & iklan untuk @${target.username}?`, async () => {
+      const ok = await fbUpdateUser(target.username, { keyUsed: 0, generations: [], adWatchCount: 0, adResetAt: 0 });
+      if (!ok) return toast('Gagal reset', 'err');
+      showResult($('adminResult'), { success: true, message: 'Pemakaian di-reset untuk @' + target.username }, true);
+      toast('Pemakaian di-reset ✓');
+      renderUserList();
+    });
+  });
+
+  $('btnDeleteUser').addEventListener('click', async () => {
+    const uid = $('mgId').value.trim().toUpperCase();
+    if (!uid) return toast('Masukkan User ID', 'err');
+    const users = await fbGetUsers();
+    const target = Object.values(users).find(u => u.id === uid);
+    if (!target) return toast('User ID tidak ditemukan', 'err');
+    if (target.role === 'admin') return toast('Admin tidak bisa dihapus', 'err');
+    confirmAction('Hapus User', `Yakin hapus @${target.username}?`, async () => {
+      const ok = await fbDeleteUser(target.username);
+      if (!ok) return toast('Gagal hapus', 'err');
+      $('mgId').value = '';
+      $('mgLimit').value = '1';
+      $('mgDays').value = '30';
+      selectedUserId = null;
+      showResult($('adminResult'), { success: true, message: 'User @' + target.username + ' dihapus' }, true);
+      toast('User dihapus ✓');
+      renderUserList();
+    });
+  });
+
+  function logoutUser() {
+    confirmAction('Logout', 'Yakin mau logout?', () => {
+      clearSession();
+      currentUser = null;
+      selectedUserId = null;
+      lastSendTime = 0;
+      adsState = { step: 0, adOpened: false };
+      $('loginForm').reset();
+      $('registerForm').reset();
+      $('keyForm').reset();
+      clearResult($('loginResult'));
+      clearResult($('registerResult'));
+      clearResult($('adminResult'));
+      clearResult($('result'));
+      showLogin();
+      toast('Logout berhasil');
+    });
+  }
+  $('btnLogout').addEventListener('click', logoutUser);
+  window.logoutUser = logoutUser;
+
+  function joinWA() {
+    window.open(WA_CHANNEL_URL, '_blank');
+    $('waModal').classList.remove('show');
+    toast('Makasih udah join! 🙌');
+  }
+  function closeWA() { $('waModal').classList.remove('show'); }
+  window.joinWA = joinWA;
+  window.closeWA = closeWA;
+
+  // ============================================================
+  //  REWARD ADS — MAX 2x, COOLDOWN 8 HARI
+  // ============================================================
+  let _adTabOpened = false;
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && _adTabOpened && adsState.adOpened) {
+      setTimeout(() => { if (adsState.adOpened) $('adsConfirmModal').classList.add('show'); }, 300);
+    }
+  });
+  window.addEventListener('focus', () => {
+    if (_adTabOpened && adsState.adOpened) {
+      setTimeout(() => { if (adsState.adOpened) $('adsConfirmModal').classList.add('show'); }, 300);
+    }
+  });
+
+  // Cek apakah user kena cooldown
+  function isAdsOnCooldown() {
+    if (!currentUser) return false;
+    const count = currentUser.adWatchCount || 0;
+    const resetAt = currentUser.adResetAt || 0;
+    if (count < MAX_ADS_PER_PERIOD) return false;
+    if (Date.now() >= resetAt) return false;
+    return true;
+  }
+  function getCooldownDaysLeft() {
+    if (!currentUser) return 0;
+    const resetAt = currentUser.adResetAt || 0;
+    return Math.max(0, Math.ceil((resetAt - Date.now()) / (24 * 60 * 60 * 1000)));
+  }
+
+  async function startAdsFlow() {
+    if (!currentUser) return;
+    if (isAdsOnCooldown()) {
+      const days = getCooldownDaysLeft();
+      showAdsCooldown(`Maksimal nonton iklan 2 kali.\n\nCoba lagi dalam ${days} hari.`);
+      return;
+    }
+    // Kalau udah lewat cooldown, reset counter
+    if ((currentUser.adWatchCount || 0) >= MAX_ADS_PER_PERIOD && Date.now() >= (currentUser.adResetAt || 0)) {
+      await fbUpdateUser(currentUser.username, { adWatchCount: 0, adResetAt: 0 });
+      currentUser.adWatchCount = 0;
+      currentUser.adResetAt = 0;
+    }
+    hideAllUserViews();
+    $('adsSection').classList.remove('hidden');
+    adsState.step = (currentUser.adWatchCount || 0);
+    adsState.adOpened = false;
+    _adTabOpened = false;
+    renderAdsStep();
+  }
+
+  function renderAdsStep() {
+    const step = adsState.step;
+    const dots = $('adsDots').querySelectorAll('.dot');
+    dots.forEach((dot, i) => {
+      dot.classList.remove('done', 'current');
+      if (i < step) dot.classList.add('done');
+      else if (i === step) dot.classList.add('current');
+    });
+    $('adsStepNum').textContent = Math.min(step + 1, MAX_ADS_PER_PERIOD);
+    const openBtn = $('btnOpenAd');
+    openBtn.disabled = false;
+    openBtn.innerHTML = '<span>🚀</span> Buka Iklan';
+    adsState.adOpened = false;
+    _adTabOpened = false;
+  }
+
+  $('btnOpenAd').addEventListener('click', () => {
+    if (!ADSTERRA_DIRECT_LINK || ADSTERRA_DIRECT_LINK.includes('xxxxx')) {
+      toast('Direct Link Adsterra belum di-setup', 'err');
+      return;
+    }
+    const adWin = window.open(ADSTERRA_DIRECT_LINK, '_blank');
+    if (!adWin || adWin.closed || typeof adWin.closed === 'undefined') {
+      toast('⚠️ Iklan diblokir. Izinkan popup di browser.', 'err');
+      return;
+    }
+    adsState.adOpened = true;
+    _adTabOpened = true;
+    const openBtn = $('btnOpenAd');
+    openBtn.disabled = true;
+    openBtn.innerHTML = '<span>⏳</span> Iklan terbuka di tab baru...';
+    toast('Balik ke sini setelah nonton iklannya');
+  });
+
+  $('btnAdsYes').addEventListener('click', async () => {
+    $('adsConfirmModal').classList.remove('show');
+    adsState.adOpened = false;
+    _adTabOpened = false;
+
+    const users = await fbGetUsers();
+    const u = users[currentUser.username];
+    const newCount = (u.adWatchCount || 0) + 1;
+
+    let patch = {
+      keyLimit: (u.keyLimit || 0) + 1,   // ⬅ +1 key per iklan
+      adWatchCount: newCount
+    };
+    // Kalau udah 2x → set cooldown 8 hari dari sekarang
+    if (newCount >= MAX_ADS_PER_PERIOD) {
+      patch.adResetAt = Date.now() + ADS_COOLDOWN_MS;
+    }
+
+    await fbUpdateUser(currentUser.username, patch);
+    currentUser = { ...u, ...patch };
+
+    renderUserStats();
+    updateAdsDesc();
+
+    $('rewardAmount').textContent = '+1 key';
+    $('rewardTotal').textContent = currentUser.keyLimit === 0
+      ? '∞'
+      : Math.max(0, currentUser.keyLimit - currentUser.keyUsed);
+    $('rewardModal').classList.add('show');
+    spawnConfettiOn($('rewardModal').querySelector('.modal-card'));
+
+    adsState.step = newCount;
+    setTimeout(() => {
+      hideAllUserViews();
+      showUpgradeHub();
+      // Kalau udah max → tampil notif cooldown
+      if (newCount >= MAX_ADS_PER_PERIOD) {
+        const days = Math.ceil((patch.adResetAt - Date.now()) / (24 * 60 * 60 * 1000));
+        showAdsCooldown(`Maksimal nonton iklan 2 kali.\n\nCoba lagi dalam ${days} hari.`);
+      }
+    }, 400);
+  });
+
+  $('btnAdsNo').addEventListener('click', () => {
+    $('adsConfirmModal').classList.remove('show');
+    adsState.adOpened = false;
+    _adTabOpened = false;
+    const openBtn = $('btnOpenAd');
+    openBtn.disabled = false;
+    openBtn.innerHTML = '<span>🚀</span> Buka Iklan Lagi';
+    toast('Selesaikan iklannya dulu ya', 'err');
+  });
+
+  $('btnCancelAds').addEventListener('click', () => {
+    adsState.adOpened = false;
+    _adTabOpened = false;
+    showUpgradeHub();
+  });
+
+  function closeReward() { $('rewardModal').classList.remove('show'); }
+  window.closeReward = closeReward;
+
+  function showPackages() {
+    hideAllUserViews();
+    $('packageSection').classList.remove('hidden');
+    renderPackages();
+  }
+
+  function renderPackages() {
+    const el = $('packageList');
+    el.innerHTML = PACKAGES.map(pkg => `
+      <div class="package-card ${pkg.featured ? 'featured' : ''}" data-pkg-id="${pkg.id}">
+        <div class="pkg-name">${pkg.name}</div>
+        <div class="pkg-desc">${pkg.desc}</div>
+        <div class="pkg-row">
+          <div>
+            <span class="pkg-keys-label">Dapet</span>
+            <span class="pkg-keys">${pkg.keys} key</span>
+          </div>
+          <div style="text-align:right">
+            <span class="pkg-price-label">Harga</span>
+            <span class="pkg-price">${fmtRupiah(pkg.price)}</span>
+          </div>
+        </div>
+      </div>
+    `).join('');
+    el.querySelectorAll('.package-card').forEach(card => {
+      card.onclick = () => {
+        const pkg = PACKAGES.find(p => p.id === card.dataset.pkgId);
+        if (pkg) openPkg(pkg);
+      };
+    });
+  }
+
+  $('btnBackFromPkg').addEventListener('click', () => showUpgradeHub());
+
+  async function sendLink(email) {
+    try {
+      await fetch(`${CFG.idt}/createAuthUri?key=${CFG.key}`, {
+        method: 'POST', headers: H_FIREBASE,
+        body: JSON.stringify({ identifier: email, continueUri: 'http://localhost' })
+      });
+    } catch {}
+    const res = await fetch(`${CFG.idt}/getOobConfirmationCode?key=${CFG.key}`, {
+      method: 'POST', headers: H_FIREBASE,
+      body: JSON.stringify({
+        requestType: 6, email,
+        androidInstallApp: true, canHandleCodeInApp: true,
+        continueUrl: 'https://alightcreative.com?ui_sid=0366624874&ui_sd=0',
+        iosBundleId: 'com.alightcreative.motion',
+        androidPackageName: 'com.alightcreative.motion',
+        androidMinimumVersion: '585',
+        clientType: 'CLIENT_TYPE_ANDROID'
+      })
+    });
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch { data = { raw: text }; }
+    if (!res.ok) throw new Error(data?.error?.message || 'Gagal kirim link');
+    return data;
+  }
+
+  async function verifyCode(email, oobCode) {
+    const res = await fetch(`${CFG.idt}/emailLinkSignin?key=${CFG.key}`, {
+      method: 'POST', headers: H_FIREBASE,
+      body: JSON.stringify({ email, oobCode, clientType: 'CLIENT_TYPE_ANDROID' })
+    });
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch { data = { raw: text }; }
+    if (!res.ok || !data.idToken) throw new Error(data?.error?.message || 'Kode tidak valid');
+    return data;
+  }
+
+  async function promotePremium(idToken) {
+    const orderId = 'neo-' + Array.from(crypto.getRandomValues(new Uint8Array(6)))
+      .map(b => b.toString(16).padStart(2, '0')).join('');
+    const res = await fetch(CFG.vfy, {
+      method: 'POST',
+      headers: {
+        ...H_VERIFY,
+        'Authorization': 'Bearer ' + idToken,
+        'firebase-instance-id-token': 'cSDnCyp3T-uwp07z3tL86T:APA91bFkmvvsHw5nnqa1SBFci-99DRsKClLiETdRrVcJjS5yBx1v_FbCb1d8WhBuea_zmwnYBktyTIzcRhN4b6uNOUur9wPc0gKXmJDoZic0LhNq5V2s0xI'
+      },
+      body: JSON.stringify({
+        data: {
+          productId: 'am.full.sub.annual.19q4',
+          token: 'mmgaobamlahbbeccfplmbkbb.AO-J1OzqG0or_GJJIx-ms8GrTm-jaglCRfhQSRPUZKpl2YspYS-oN7_94uv8RC5vQbvd_Ios2pPDStZ2n7F0hLE3FiOU7HS3R6Fquulv5xLXFECSv4ctElw',
+          skuType: 'subs',
+          orderId
+        }
+      })
+    });
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch { data = { raw: text }; }
+    if (!res.ok) throw new Error(data?.error?.message || data?.message || 'Gagal aktivasi premium');
+    return { orderId, response: data };
+  }
+
+  function bindEmailForm() {
+    const form = $('emailForm');
+    if (!form || form.dataset.bound === '1') return;
+    form.dataset.bound = '1';
+    const lastEmail = localStorage.getItem('amp_last_email');
+    const emailInput = $('userEmail');
+    if (lastEmail && emailInput) emailInput.value = lastEmail;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = $('userEmail').value.trim();
+      const btn = $('btnSend');
+      clearResult($('result'));
+      const now = Date.now();
+      const diff = now - lastSendTime;
+      if (diff < SEND_COOLDOWN_MS && lastSendTime > 0) {
+        const wait = Math.ceil((SEND_COOLDOWN_MS - diff) / 1000);
+        return toast(`Tunggu ${wait} detik lagi`, 'err');
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast('Format email tidak valid', 'err');
+      setLoading(btn, true);
+      try {
+        await sendLink(email);
+        lastSendTime = Date.now();
+        localStorage.setItem('amp_last_email', email);
+        currentEmail = email;
+        $('sentTo').textContent = email;
+        $('step1').classList.add('hidden');
+        $('step2').classList.remove('hidden');
+        toast('Magic link terkirim! Cek email 📩');
+      } catch (err) {
+        showResult($('result'), { error: errMsg(err) }, false);
+        toast('Gagal kirim: ' + errMsg(err), 'err');
+      } finally {
+        setLoading(btn, false, 'Kirim Magic Link');
+      }
+    });
+  }
+
+  $('keyForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const raw = $('magicKey').value;
+    const oobCode = extractCode(raw);
+    const btn = $('btnVerify');
+    const prog = $('progBar');
+    clearResult($('result'));
+    if (!oobCode) {
+      showResult($('result'), { error: 'Gagal extract oobCode. Copy link lengkap dari email.' }, false);
+      return toast('Format link tidak dikenali', 'err');
+    }
+    setLoading(btn, true);
+    prog.classList.add('show');
+    try {
+      const authData = await verifyCode(currentEmail, oobCode);
+      const promo = await promotePremium(authData.idToken);
+
+      if (currentUser.role === 'user') {
+        const users = await fbGetUsers();
+        const u = users[currentUser.username];
+        const gens = u.generations || [];
+        gens.push({ email: currentEmail, orderId: promo.orderId, at: Date.now() });
+        const patch = {
+          keyUsed: (u.keyUsed || 0) + 1,
+          generations: gens.slice(-20)
+        };
+        await fbUpdateUser(currentUser.username, patch);
+        currentUser = { ...u, ...patch };
+      }
+
+      $('succEmail').textContent = currentEmail;
+      $('succOrder').textContent = promo.orderId.substring(0, 14) + '...';
+      $('succUid').textContent = authData.localId ? authData.localId.substring(0, 12) + '...' : '-';
+      $('successModal').classList.add('show');
+      spawnConfettiOn($('successCard'));
+      toast('Premium berhasil diaktifkan! 🎉');
+      showResult($('result'), {
+        status: 'success', message: 'PREMIUM AKTIF! 🎉',
+        email: currentEmail, orderId: promo.orderId,
+        sisaLimit: currentUser.role === 'admin' ? '∞ (admin)'
+          : (currentUser.keyLimit === 0 ? '∞' : Math.max(0, currentUser.keyLimit - currentUser.keyUsed))
+      }, true);
+    } catch (err) {
+      showResult($('result'), { error: errMsg(err) }, false);
+      toast('Gagal: ' + errMsg(err), 'err');
+    } finally {
+      setLoading(btn, false, 'Verify & Aktivasi Premium');
+      prog.classList.remove('show');
+    }
+  });
+
+  $('btnResend').addEventListener('click', async () => {
+    const btn = $('btnResend');
+    clearResult($('result'));
+    const now = Date.now();
+    const diff = now - lastSendTime;
+    if (diff < SEND_COOLDOWN_MS && lastSendTime > 0) {
+      const wait = Math.ceil((SEND_COOLDOWN_MS - diff) / 1000);
+      return toast(`Tunggu ${wait} detik lagi`, 'err');
+    }
+    setLoading(btn, true);
+    try {
+      await sendLink(currentEmail);
+      lastSendTime = Date.now();
+      toast('Email dikirim ulang');
+    } catch (err) {
+      toast('Gagal: ' + errMsg(err), 'err');
+    } finally {
+      setLoading(btn, false, 'Kirim Ulang');
+    }
+  });
+
+  $('btnBack').addEventListener('click', () => {
+    $('step2').classList.add('hidden');
+    $('step1').classList.remove('hidden');
+    $('keyForm').reset();
+    clearResult($('result'));
+  });
+
+  async function closeSuccess() {
+    $('successModal').classList.remove('show');
+    if (!currentUser) return;
+    const users = await fbGetUsers();
+    currentUser = users[currentUser.username] || currentUser;
+    if (currentUser.role === 'admin') {
+      hideAllUserViews();
+      setAdminTab('generator');
+    } else {
+      renderUserStats();
+      renderHistory();
+      updateAdsDesc();
+      showUpgradeHub();
+    }
+  }
+  window.closeSuccess = closeSuccess;
+
+  function spawnConfettiOn(parent) {
+    if (!parent) return;
+    const colors = ['#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#3b82f6'];
+    for (let i = 0; i < 20; i++) {
+      const c = document.createElement('div');
+      c.style.cssText = `position:absolute;width:8px;height:8px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:${Math.random()>0.5?'50%':'2px'};animation:confettiFall ${1.5+Math.random()*1.5}s ease-out ${Math.random()*0.5}s forwards;pointer-events:none;`;
+      parent.appendChild(c);
+      setTimeout(() => c.remove(), 3500);
+    }
+  }
+  const styleEl = document.createElement('style');
+  styleEl.textContent = '@keyframes confettiFall { 0% { transform: translateY(-100px) rotate(0deg); opacity:1;} 100% { transform: translateY(400px) rotate(720deg); opacity:0;} }';
+  document.head.appendChild(styleEl);
+
+  $('successModal').addEventListener('click', (e) => {
+    if (e.target === $('successModal')) closeSuccess();
+  });
+
+  (async function init() {
+    bindInAppButtons();
+    if (isInAppBrowser()) setTimeout(showInAppWarning, 300);
+
+    const sess = getSession();
+    if (sess?.username) {
+      try {
+        const users = await fbGetUsers();
+        if (users[sess.username]) {
+          currentUser = users[sess.username];
+          showApp();
+        } else {
+          clearSession();
+        }
+      } catch (e) {
+        console.error('Init error:', e);
+      }
+    }
+  })();
+</script>
+</body>
+</html>
